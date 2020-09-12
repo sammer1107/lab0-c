@@ -29,6 +29,14 @@ typedef struct {
     size_t size;
 } queue_t;
 
+/* Operations on list element */
+
+/*
+ * Free a list element.
+ * No effect if ele is NULL
+ */
+void list_element_free(list_ele_t *ele);
+
 /* Operations on queue */
 
 /*

@@ -5,6 +5,13 @@
 #include "harness.h"
 #include "queue.h"
 
+void list_element_free(list_ele_t *ele)
+{
+    free(ele->value);
+    free(ele);
+}
+
+
 /*
  * Create empty queue.
  * Return NULL if could not allocate space.
@@ -29,8 +36,7 @@ void q_free(queue_t *q)
     while (q->head) {
         list_ele_t *next;
         next = q->head->next;
-        free(q->head->value);
-        free(q->head);
+        list_element_free(q->head);
         q->head = next;
     }
 
@@ -118,9 +124,22 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    /* TODO: You need to fix up this code. */
-    /* TODO: Remove the above comment when you are about to implement. */
-    q->head = q->head->next;
+    if (!q || !q->head)
+        return false;
+
+    list_ele_t *removed = q->head;
+
+    strncpy(sp, removed->value, bufsize - 1);
+    *(sp + bufsize - 1) = '\0';
+
+    if (q->size == 1) {
+        q->tail = q->head = NULL;
+    } else {
+        q->head = q->head->next;
+    }
+    list_element_free(removed);
+    q->size -= 1;
+
     return true;
 }
 
