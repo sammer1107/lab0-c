@@ -14,6 +14,7 @@ queue_t *q_new()
     queue_t *q = malloc(sizeof(queue_t));
     if (q) {
         q->head = NULL;
+        q->tail = NULL;
         q->size = 0;
     }
     return q;
@@ -22,8 +23,11 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    list_ele_t *next;
+    if (!q)
+        return;
+
     while (q->head) {
+        list_ele_t *next;
         next = q->head->next;
         free(q->head->value);
         free(q->head);
@@ -50,18 +54,19 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
     }
     newh = malloc(sizeof(list_ele_t));
-    if (newh == NULL) {
-        return false;
-    }
     string = malloc(sizeof(char) * str_len);
-    if (string == NULL) {
+    if (newh == NULL || string == NULL) {
         free(newh);
+        free(string);
         return false;
     }
     strncpy(string, s, str_len);
     newh->value = string;
     newh->next = q->head;
     q->head = newh;
+    if (q->size == 0) {
+        q->tail = q->head;
+    }
     q->size += 1;
     return true;
 }
@@ -75,10 +80,32 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* TODO: You need to write the complete code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-    return false;
+    list_ele_t *new;
+    char *string;
+    size_t str_len = strlen(s) + 1;  // include null terminator
+
+    if (q == NULL) {
+        return false;
+    }
+    new = malloc(sizeof(list_ele_t));
+    string = malloc(sizeof(char) * str_len);
+    if (new == NULL || string == NULL) {
+        free(new);
+        free(string);
+        return false;
+    }
+    strncpy(string, s, str_len);
+    new->value = string;
+    new->next = NULL;
+    if (q->size == 0) {
+        q->head = q->tail = new;
+    } else {
+        q->tail->next = new;
+        q->tail = new;
+    }
+    q->size += 1;
+
+    return true;
 }
 
 /*
