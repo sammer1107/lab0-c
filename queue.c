@@ -11,6 +11,25 @@ void list_element_free(list_ele_t *ele)
     free(ele);
 }
 
+list_ele_t *list_element_new(char *s)
+{
+    size_t len = strlen(s) + 1;  // include null terminator
+
+    list_ele_t *new = malloc(sizeof(list_ele_t));
+    if (new == NULL) {
+        return NULL;
+    }
+    new->value = malloc(sizeof(char) * len);
+    if (new->value == NULL) {
+        free(new);
+        return NULL;
+    }
+    new->next = NULL;
+    strncpy(new->value, s, len);
+
+    return new;
+}
+
 
 /*
  * Create empty queue.
@@ -53,21 +72,11 @@ void q_free(queue_t *q)
 bool q_insert_head(queue_t *q, char *s)
 {
     list_ele_t *newh;
-    char *string;
-    size_t str_len = strlen(s) + 1;  // include null terminator
-
     if (q == NULL) {
         return false;
     }
-    newh = malloc(sizeof(list_ele_t));
-    string = malloc(sizeof(char) * str_len);
-    if (newh == NULL || string == NULL) {
-        free(newh);
-        free(string);
-        return false;
-    }
-    strncpy(string, s, str_len);
-    newh->value = string;
+
+    newh = list_element_new(s);
     newh->next = q->head;
     q->head = newh;
     if (q->size == 0) {
@@ -87,22 +96,12 @@ bool q_insert_head(queue_t *q, char *s)
 bool q_insert_tail(queue_t *q, char *s)
 {
     list_ele_t *new;
-    char *string;
-    size_t str_len = strlen(s) + 1;  // include null terminator
 
     if (q == NULL) {
         return false;
     }
-    new = malloc(sizeof(list_ele_t));
-    string = malloc(sizeof(char) * str_len);
-    if (new == NULL || string == NULL) {
-        free(new);
-        free(string);
-        return false;
-    }
-    strncpy(string, s, str_len);
-    new->value = string;
-    new->next = NULL;
+
+    new = list_element_new(s);
     if (q->size == 0) {
         q->head = q->tail = new;
     } else {
@@ -129,8 +128,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     list_ele_t *removed = q->head;
 
-    strncpy(sp, removed->value, bufsize - 1);
-    *(sp + bufsize - 1) = '\0';
+    snprintf(sp, bufsize, "%s", removed->value);
 
     if (q->size == 1) {
         q->tail = q->head = NULL;

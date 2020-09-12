@@ -37,6 +37,12 @@ typedef struct {
  */
 void list_element_free(list_ele_t *ele);
 
+/*
+ * Create and initialize a list element
+ * with its value copied from s
+ */
+list_ele_t *list_element_new(char *s);
+
 /* Operations on queue */
 
 /*
