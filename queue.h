@@ -43,6 +43,12 @@ void list_element_free(list_ele_t *ele);
  */
 list_ele_t *list_element_new(char *s);
 
+/* Operation on list */
+
+list_ele_t *merge_sort_list(list_ele_t *);
+list_ele_t *merge_sorted(list_ele_t *, list_ele_t *);
+
+
 /* Operations on queue */
 
 /*
