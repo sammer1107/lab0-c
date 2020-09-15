@@ -77,6 +77,9 @@ bool q_insert_head(queue_t *q, char *s)
     }
 
     newh = list_element_new(s);
+    if (!newh)
+        return false;
+
     newh->next = q->head;
     q->head = newh;
     if (q->size == 0) {
@@ -102,6 +105,9 @@ bool q_insert_tail(queue_t *q, char *s)
     }
 
     new = list_element_new(s);
+    if (!new)
+        return false;
+
     if (q->size == 0) {
         q->head = q->tail = new;
     } else {
@@ -163,6 +169,9 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
+    if (!q)
+        return;
+
     list_ele_t *cursor = NULL;
     q->tail = q->head;
     while (q->head) {
@@ -181,7 +190,7 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
-    if (!q)
+    if (!q || !q->head)
         return;
 
     q->head = merge_sort_list(q->head);
@@ -194,8 +203,8 @@ void q_sort(queue_t *q)
 
 list_ele_t *merge_sort_list(list_ele_t *head)
 {
-    // NULL or single node
-    if (!head || !head->next) {
+    // single node
+    if (!head->next) {
         return head;
     }
 
